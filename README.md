@@ -98,6 +98,39 @@ MindMate leverages a modern, robust, and highly integrated stack spanning fronte
 
 ---
 
+## AI Architecture Explanation
+
+### 1. Inputs (What data goes in)
+*   **User Conversation Input:** Raw text query or message typed by the user in natural language (Egyptian Arabic dialect or English).
+*   **Daily Log State (Structured context):** Current numeric values logged today for user habits (e.g. `sleep_hours`, `water_cups`, `screen_hours`, `stress_level`).
+*   **Short-Term Conversation History:** Stored chat messages from the active session to maintain context.
+*   **Long-Term Semantic Memories:** Top matching conversation excerpts retrieved from ChromaDB based on embedding similarity search.
+*   **Local NLP Emotion Label:** Independent sentiment category detected by the local emotion engine.
+
+### 2. AI Capability Used
+*   **Generative AI Chatbot (Conversation & Extraction):** Powering the core persona, natural dialogue generation in Egyptian dialect, and zero-shot schema extraction.
+*   **Text Classification (Zero-Shot & Multi-Class Local Classification):**
+    *   *Crisis Detection:* Multilingual zero-shot classification to map text to high-risk psychological states.
+    *   *Emotion Recognition:* Sentiment classification classifying input text into 6 key human emotions.
+*   **Information Retrieval & Recommendation (Semantic Search):** Local vector embeddings and similarity queries to retrieve contextually relevant memories.
+
+### 3. What Processing Happens
+1.  **Safety Screening:** The incoming message is passed through keyword lists and the multilingual XLM-RoBERTa classifier. If a high-risk crisis category exceeds safety thresholds, normal LLM generation is bypassed, and a hard safety fallback response is generated.
+2.  **Emotion Profiling:** The text is translated to English and analyzed by a local DistilBERT classifier. The resulting dominant emotion is fed into the generative prompt.
+3.  **Memory Recall:** The query is embedded via Gemini's API. ChromaDB executes a query against historical embeddings under the active user's ID to fetch the top 3 semantically relevant past statements.
+4.  **Habit Metric Extraction:** A structured JSON extraction prompt reads the user's text and maps numbers to corresponding daily metrics (e.g., extracting `{"sleep_hours": 7.5}` from *"نمت ٧ ساعات ونص"*).
+5.  **Dynamic Dialogue Synthesis:** A final context-enriched prompt (combining missing metrics, current day's progress, long-term memories, short-term history, and local emotion tags) is evaluated by Gemini. The response is streamed to the user.
+6.  **Database Commit:** The message is saved in SQLite, and the generated response is embedded and saved in ChromaDB.
+
+### 4. Outputs (What the user receives)
+*   **Empathetic Conversational Response:** A streaming, context-aware, friendly reply in Egyptian Arabic tailored to the user's emotion.
+*   **Structured Metric Logs:** Automatic graphical updates to the web dashboard dashboard reflecting habits extracted from the conversation.
+*   **Dynamic Day Theme:** Updated mood category, theme color, and emoji reflecting the day's dominant feeling.
+*   **Emergency Support Fallback:** Helpline telephone numbers and direct text interventions in case of mental health crises.
+*   **Weekly Synthesis Reports:** Formatted PDF/text reports summarizing accomplishments, correlations, and coaching tips.
+
+---
+
 ## Challenges we ran into
 
 1.  **Dialect Nuance in Sentiment Analysis:**
