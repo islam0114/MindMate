@@ -1,0 +1,38 @@
+# --- Python Specific ---
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments (Commonly used in AI projects)
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables (Crucial for API keys security)
+.env
+
+# --- IDE and OS Files ---
+# VS Code
+.vscode/
+# PyCharm/IntelliJ
+.idea/
+# OS system files
+.DS_Store
+Thumbs.db
+
+# --- AI & Data Specific ---
+# Large files that should not be tracked by Git
+*.h5
+*.pt
+*.pth
+*.pkl
+*.jsonl
+data/
+datasets/
+models/
+
+# Logs and Documentation
+*.log
